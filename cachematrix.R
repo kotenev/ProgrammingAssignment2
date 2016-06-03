@@ -1,55 +1,67 @@
+# read the R script
+# replace the "path/to/file" with the directory you save the file into
+# or you can read the file directly from the web
+source("path/to/file/assessment3.R")
 
-## This function creates a special "matrix" object that can cache its inverse.
+# create a *square* matrix (because `solve` only handles square matrices)
+# create the matrix during the call of makeCacheMatrix()
+a <- makeCacheMatrix( matrix(c(1,2,12,13), nrow = 2, ncol = 2) );
 
-makeCacheMatrix <- function(x = matrix()) {
-        inv <- NULL
-        set <- function(y) {
-                x <<- y
-                inv <<- NULL
-        }
-        get <- function() x
-        setInverse <- function(inverse) inv <<- inverse
-        getInverse <- function() inv
-        list(set = set,
-             get = get,
-             setInverse = setInverse,
-             getInverse = getInverse)
-}
+summary(a);
+#>              Length Class  Mode    
+#> setMatrix    1      -none- function
+#> getMatrix    1      -none- function
+#> cacheInverse 1      -none- function
+#> getInverse   1      -none- function
 
+a$getMatrix();
+#>      [,1] [,2]
+#> [1,]    1   12
+#> [2,]    2   13
 
-## This function computes the inverse of the special "matrix" created by 
-## makeCacheMatrix above. If the inverse has already been calculated (and the 
-## matrix has not changed), then it should retrieve the inverse from the cache.
+cacheSolve(a)
+#> [,1]        [,2]
+#> [1,] -1.1818182  1.09090909
+#> [2,]  0.1818182 -0.09090909
 
-cacheSolve <- function(x, ...) {
-        ## Return a matrix that is the inverse of 'x'
-        inv <- x$getInverse()
-        if (!is.null(inv)) {
-                message("getting cached data")
-                return(inv)
-        }
-        mat <- x$get()
-        inv <- solve(mat, ...)
-        x$setInverse(inv)
-        inv
-}
+# the 2nd time we run the function,we get the cached value
+cacheSolve(a)
+#> getting cached data
+#> [,1]        [,2]
+#> [1,] -1.1818182  1.09090909
+#> [2,]  0.1818182 -0.09090909
 
+## Alternatively, the matrix can be created after calling a makeCacheMatrix without arguments.
 
- 
-## Testing the function
-source("ProgrammingAssignment2/cachematrix.R")
-my_matrix <- makeCacheMatrix(matrix(1:4, 2, 2))
-my_matrix$get()
+# read the R script
+# replace the "path/to/file" with the directory you save the file into
+# or you can read the file directly from the web
+source("path/to/file/assessment3.R")
 
-my_matrix$getInverse()
-cacheSolve(my_matrix)
-my_matrix$getInverse()
-my_matrix$set(matrix(c(2, 2, 1, 4), 2, 2))
-my_matrix$get()
-my_matrix$getInverse()
-cacheSolve(my_matrix)
-cacheSolve(my_matrix)
-my_matrix$getInverse()
+# call makeCacheMatrix without arguments
+a <- makeCacheMatrix();
+summary(a);
+#>              Length Class  Mode    
+#> setMatrix    1      -none- function
+#> getMatrix    1      -none- function
+#> cacheInverse 1      -none- function
+#> getInverse   1      -none- function
 
+# create a square matrix (reason `solve` only handles square matrices )
+a$setMatrix( matrix(c(1,2,12,13), nrow = 2, ncol = 2) );
+a$getMatrix();
+#>      [,1] [,2]
+#> [1,]    1   12
+#> [2,]    2   13
 
+cacheSolve(a)
+#> [,1]        [,2]
+#> [1,] -1.1818182  1.09090909
+#> [2,]  0.1818182 -0.09090909
 
+# the 2nd time we run the function, we get the cached value
+cacheSolve(a)
+#> getting cached data
+#> [,1]        [,2]
+#> [1,] -1.1818182  1.09090909
+#> [2,]  0.1818182 -0.09090909
